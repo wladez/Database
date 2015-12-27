@@ -1,3 +1,6 @@
+connect 'D:\database\FOOTBALL.fdb' user 'SYSDBA' password 'masterkey';
+drop database;
+create database 'D:\database\FOOTBALL.fdb' user 'SYSDBA' password 'masterkey';
 create table Club(
     id int primary key,
     club_name varchar(25),
@@ -42,7 +45,7 @@ create table Act (
     id int primary key,
     playerID int not null,
     actType ActTypeDomain,
-    match_minute time
+    match_minute int
 );
 
 alter table Act add constraint acts_to_player
