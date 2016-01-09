@@ -12,6 +12,10 @@ create table Transfer(
 
 alter table Transfer add constraint transfer_to_player
     foreign key (playerID) references Player(id);
+alter table Transfer add constraint transfer_fromClub
+    foreign key (fromClub) references Club(id);
+alter table Transfer add constraint transfer_toClub
+    foreign key (toClub) references Club(id);
 
 create table Championship(
     id int primary key,

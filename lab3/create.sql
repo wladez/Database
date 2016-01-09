@@ -9,8 +9,7 @@ create table Club(
 
 create table Player(
     id int primary key,
-    player_name varchar(25),
-    player_surname varchar(25),
+    player_name varchar(50),
     number integer NOT null,
     clubID int not null,
     country varchar(25)
@@ -29,13 +28,15 @@ create table Match(
     home int not null,
     away int not null,
     result varchar(25),
-    winner varchar(25)
+    winner int not null
 );
 
 alter table Match add constraint match_to_home
     foreign key (home) references Club(id);
 alter table Match add constraint match_to_away
     foreign key (away) references Club(id);
+alter table Match add constraint match_to_winner
+    foreign key (winner) references Club(id);
 
 create domain ActTypeDomain
     AS varchar(15)
