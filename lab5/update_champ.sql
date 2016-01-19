@@ -1,57 +1,70 @@
-create procedure update_champ
-as begin
-    if(Matchstat_champ.home_scored>Matchstat_champ.away_scored and Matchstat_champ.matchid=Match_champ.id) then
+create procedure update_champ(t integer)
+as 
+declare variable home_sc int;
+declare variable away_sc int;
+declare variable home_id int;
+declare variable away_id int;
+declare variable i int;
+begin
+    for select Match_champ.id from Match_champ where Match_champ.tour=:t into :i
+    do
     begin
-        /*обновление статистики для победившего*/
-        update Championship set goalsFor=goalsFor+Matchstat_champ.home_scored
-            where Matchstat_champ.matchid=Match_champ.id and Match_champ.home=Championship.clubid;
-        update Championship set goalsAgainst=goalsAgainst+Matchstat.away_scored
-            where Matchstat_champ.matchid=Match_champ.id and Match_champ.home=Championship.clubid;
-        update Championship set played=played+1 where Match_champ.home=Championship.clubid
-            and Match_champ.away=Championship.clubid;
-        update Championship set won=won+1 where Match_champ.home=Championship.clubid;
-        update Championship set points=points+3 where Match_champ.home=Championship.clubid;
+        select Matchstat_champ.home_scored, Matchstat_champ.away_scored,
+            Match_champ.home, Match_champ.away from Matchstat_champ, Match_champ
+            where Match_champ.id=:i and Matchstat_champ.matchid=Match_champ.id
+            into :home_sc, :away_sc, :home_id, :away_id;
+        if(home_sc>away_sc) then
+        begin
+            /*обновление статистики для победившего*/
+            update Championship set goalsFor=goalsFor+:home_sc
+                where clubid = :home_id;
+            update Championship set goalsAgainst=goalsAgainst+:away_sc
+                where clubid = :home_id;
+            update Championship set played=played+1 where clubid = :home_id
+                and clubid = :away_id;
+            update Championship set won=won+1 where clubid = :home_id;
+            update Championship set points=points+3 where clubid = :home_id;
 
-        /*обновление статистики для проигравшего*/
-        update Championship set goalsFor=goalsFor+Matchstat_champ.away_scored
-            where Matchstat_champ.matchid=Match_champ.id and Match_champ.away=Championship.clubid;
-        update Championship set goalsAgainst=goalsAgainst+Matchstat_champ.home_scored
-            where Matchstat_champ.matchid=Match_champ.id and Match_champ.away=Championship.clubid;
-        update Championship set lost=lost+1 where Match_champ.away=Championship.clubid;
+            /*обновление статистики для проигравшего*/
+            update Championship set goalsFor=goalsFor+:away_sc
+                where clubid = :away_id;
+            update Championship set goalsAgainst=goalsAgainst+:home_sc
+                where clubid = :away_id;
+            update Championship set lost=lost+1 where clubid = :away_id;
+        end
+
+        if(home_sc<away_sc) then
+        begin
+            /*обновление статистики для победившего*/
+            update Championship set goalsFor=goalsFor+:away_sc
+                where clubid = :away_id;
+            update Championship set goalsAgainst=goalsAgainst+:home_sc
+                where clubid = :away_id;
+            update Championship set played=played+1 where clubid = :home_id
+                and clubid = :away_id;
+            update Championship set won=won+1 where clubid = :away_id;
+            update Championship set points=points+3 where clubid = :away_id;
+
+            /*обновление статистики для проигравшего*/
+            update Championship set goalsFor=goalsFor+:home_sc
+                where clubid = :home_id;
+            update Championship set goalsAgainst=goalsAgainst+:away_sc
+                where clubid = :home_id;
+            update Championship set lost=lost+1 where clubid = :home_id;
+        end
+
+        if(home_sc=away_sc) then
+        begin
+            update Championship set goalsFor=goalsFor+:home_sc
+                where clubid = :home_id and clubid = :away_id;
+            update Championship set goalsAgainst=goalsAgainst+:away_sc
+                where clubid = :home_id and clubid = :away_id;
+            update Championship set played=played+1 where clubid = :home_id
+                and clubid = :away_id;
+            update Championship set drawn=drawn+1 where clubid = :home_id
+                and clubid = :away_id;
+            update Championship set points=points+1 where clubid = :home_id
+                and clubid = :away_id;
+        end
     end
-
-    if(Matchstat_champ.home_scored<Matchstat_champ.away_scored and Matchstat_champ.matchid=Match_champ.id) then
-    begin
-        /*обновление статистики для победившего*/
-        update Championship set goalsFor=goalsFor+Matchstat_champ.away_scored
-            where Matchstat_champ.matchid=Match_champ.id and Match_champ.away=Championship.clubid;
-        update Championship set goalsAgainst=goalsAgainst+Matchstat_champ.home_scored
-            where Matchstat_champ.matchid=Match_champ.id and Match_champ.away=Championship.clubid;
-        update Championship set played=played+1 where Match_champ.home=Championship.clubid
-            and Match_champ.away=Championship.clubid;
-        update Championship set won=won+1 where Match_champ.away=Championship.clubid;
-        update Championship set points=points+3 where Match_champ.away=Championship.clubid;
-
-        /*обновление статистики для проигравшего*/
-        update Championship set goalsFor=goalsFor+Matchstat_champ.home_scored
-            where Matchstat_champ.matchid=Match_champ.id and Match_champ.home=Championship.clubid;
-        update Championship set goalsAgainst=goalsAgainst+Matchstat_champ.away_scored
-            where Matchstat_champ.matchid=Match_champ.id and Match_champ.home=Championship.clubid;
-        update Championship set lost=lost+1 where Match_champ.home=Championship.clubid;
-    end
-
-    if(Matchstat_champ.home_scored=Matchstat_champ.away_scored and Matchstat_champ.matchid=Match_champ.id) then
-    begin
-        update Championship set goalsFor=goalsFor+Matchstat_champ.home_scored
-            where Championship.clubid=Match_champ.home and Match_champ.away=Championship.clubid;
-        update Championship set goalsAgainst=goalsAgainst+Matchstat_champ.away_scored
-            where Championship.clubid=Match_champ.home and Match_champ.away=Championship.clubid;
-        update Championship set played=played+1 where Match_champ.home=Championship.clubid
-            and Match_champ.away=Championship.clubid;
-        update Championship set drawn=drawn+1 where Match_champ.home=Championship.clubid
-            and Match_champ.away=Championship.clubid;
-        update Championship set points=points+1 where Match_champ.home=Championship.clubid
-            and Match_champ.away=Championship.clubid;
-    end
-
 end;

@@ -30,12 +30,12 @@ begin
     select count(Act.acttype) from Act, Player where Player.id=Act.playerid
         and Act.acttype="red card" and Player.playerposition=:pos into :tmpRed;
 
-    avGoals=tmpGoals/cnt;
-    avAssists=tmpAssists;
-    avYellowCards=tmpYellow/cnt;
-    avRedCards=tmpRed/cnt;
-    raznGoals=goals-avGoals;
-    raznAssists=assists-avAssists;
-    raznYellowCards=yellowCards-avYellowCards;
-    raznRedCards=redCards-avRedCards;
+    avGoals=:tmpGoals/:cnt;
+    avAssists=:tmpAssists/:cnt;
+    avYellowCards=:tmpYellow/:cnt;
+    avRedCards=:tmpRed/:cnt;
+    raznGoals=:goals-:avGoals;
+    raznAssists=:assists-:avAssists;
+    raznYellowCards=:yellowCards-:avYellowCards;
+    raznRedCards=:redCards-:avRedCards;
 end;
