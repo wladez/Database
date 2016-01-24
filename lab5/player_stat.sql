@@ -20,7 +20,7 @@ begin
     select count(Act.acttype) from Act where :plid=Act.playerid and Act.acttype="red card" into :redCards;
 
     select count(Player.playerposition) from Player where Player.playerposition=:pos
-        and Player.id<1000 into :cnt;
+        and Player.id in (select Act.playerid from Act) into :cnt;
     select count(Act.acttype) from Act, Player where Player.id=Act.playerid
         and Act.acttype="goal" and Player.playerposition=:pos into :tmpGoals;
     select count(Act.acttype) from Act, Player where Player.id=Act.playerid

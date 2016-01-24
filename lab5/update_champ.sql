@@ -20,8 +20,7 @@ begin
                 where clubid = :home_id;
             update Championship set goalsAgainst=goalsAgainst+:away_sc
                 where clubid = :home_id;
-            update Championship set played=played+1 where clubid = :home_id
-                and clubid = :away_id;
+            update Championship set played=played+1 where clubid = :home_id;
             update Championship set won=won+1 where clubid = :home_id;
             update Championship set points=points+3 where clubid = :home_id;
 
@@ -30,6 +29,7 @@ begin
                 where clubid = :away_id;
             update Championship set goalsAgainst=goalsAgainst+:home_sc
                 where clubid = :away_id;
+            update Championship set played=played+1 where clubid = :away_id;
             update Championship set lost=lost+1 where clubid = :away_id;
         end
 
@@ -40,8 +40,7 @@ begin
                 where clubid = :away_id;
             update Championship set goalsAgainst=goalsAgainst+:home_sc
                 where clubid = :away_id;
-            update Championship set played=played+1 where clubid = :home_id
-                and clubid = :away_id;
+            update Championship set played=played+1 where clubid = :away_id;
             update Championship set won=won+1 where clubid = :away_id;
             update Championship set points=points+3 where clubid = :away_id;
 
@@ -50,21 +49,27 @@ begin
                 where clubid = :home_id;
             update Championship set goalsAgainst=goalsAgainst+:away_sc
                 where clubid = :home_id;
+            update Championship set played=played+1 where clubid = :home_id;
             update Championship set lost=lost+1 where clubid = :home_id;
         end
 
         if(home_sc=away_sc) then
         begin
+            /*ничья*/
             update Championship set goalsFor=goalsFor+:home_sc
-                where clubid = :home_id and clubid = :away_id;
+                where clubid = :home_id;
+            update Championship set goalsFor=goalsFor+:home_sc
+                where clubid = :away_id;
             update Championship set goalsAgainst=goalsAgainst+:away_sc
-                where clubid = :home_id and clubid = :away_id;
-            update Championship set played=played+1 where clubid = :home_id
-                and clubid = :away_id;
-            update Championship set drawn=drawn+1 where clubid = :home_id
-                and clubid = :away_id;
-            update Championship set points=points+1 where clubid = :home_id
-                and clubid = :away_id;
+                where clubid = :home_id;
+            update Championship set goalsAgainst=goalsAgainst+:away_sc
+                where clubid = :away_id;
+            update Championship set played=played+1 where clubid = :home_id;
+            update Championship set played=played+1 where clubid = :away_id;
+            update Championship set drawn=drawn+1 where clubid = :home_id;
+            update Championship set drawn=drawn+1 where clubid = :away_id;
+            update Championship set points=points+1 where clubid = :home_id;
+            update Championship set points=points+1 where clubid = :away_id;
         end
     end
 end;
